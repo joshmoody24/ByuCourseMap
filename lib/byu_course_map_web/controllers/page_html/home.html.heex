@@ -15,16 +15,16 @@
   <div class="flex">
     <div class="w-full sm:w-auto">
       <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-3">
-        <a
-          href="https://hexdocs.pm/phoenix/overview.html"
+        <.link
+          href={~p"/crawl"}
           class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
         >
           <span class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105">
           </span>
           <span class="relative flex items-center gap-4 justify-center w-full h-full">
-            Get Started
+            Crawl
           </span>
-        </a>
+        </.link>
         <a
           href="https://github.com/joshmoody24/ByuCourseMap"
           class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
@@ -35,8 +35,8 @@
             Source Code
           </span>
         </a>
-        <a
-          href="/about"
+        <.link
+          href={~p"/about"}
           class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
         >
           <span class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105">
@@ -44,7 +44,7 @@
           <span class="relative flex items-center gap-4 justify-center h-full w-full">
             About
           </span>
-        </a>
+        </.link>
       </div>
       <div class="mt-10 grid grid-cols-1 gap-y-4 text-sm leading-6 text-zinc-700 sm:grid-cols-2">
         <div>

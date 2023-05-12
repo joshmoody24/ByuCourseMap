@@ -19,7 +19,9 @@ defmodule ByuCourseMapWeb.Router do
 
     get "/", PageController, :home
     get "/about", PageController, :about
+    live "/crawl", CrawlLive, :crawl
   end
+
 
   # Other scopes may use custom stacks.
   # scope "/api", ByuCourseMapWeb do

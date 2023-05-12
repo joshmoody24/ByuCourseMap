@@ -17,7 +17,7 @@ defmodule ByuCourseMap.Application do
       # Start Finch
       {Finch, name: ByuCourseMap.Finch},
       # Start the Endpoint (http/https)
-      ByuCourseMapWeb.Endpoint
+      ByuCourseMapWeb.Endpoint,
       # Start a worker by calling: ByuCourseMap.Worker.start_link(arg)
       # {ByuCourseMap.Worker, arg}
     ]

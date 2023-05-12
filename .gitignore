@@ -36,5 +36,3 @@ npm-debug.log
 /assets/node_modules/
 
 /set_env.ps1
-
-dets_simple_storage
