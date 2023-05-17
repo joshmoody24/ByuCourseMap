@@ -1,0 +1,24 @@
+version: '3.6'
+services:
+  db:
+    image: mysql:8.0
+    cap_add:
+      - SYS_NICE
+    restart: always
+    environment:
+      - MYSQL_DATABASE=byu_course_map
+      - MYSQL_ROOT_PASSWORD=password123
+    ports:
+      - '3306:3306'
+  web:
+    build: .
+    depends_on:
+      - db
+    environment:
+      MIX_ENV: dev
+    env_file:
+      - .env
+    ports:
+      - '4000:4000'
+volumes:
+  pgdata:
