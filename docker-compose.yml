@@ -1,15 +1,14 @@
 version: '3.6'
 services:
   db:
-    image: mysql:8.0
-    cap_add:
-      - SYS_NICE
-    restart: always
     environment:
-      - MYSQL_DATABASE=byu_course_map
-      - MYSQL_ROOT_PASSWORD=password123
-    ports:
-      - '3306:3306'
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_PASSWORD: password123
+      POSTGRES_USER: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_DB: byu_course_map
+    image: postgres:alpine
+    restart: always
   web:
     build: .
     depends_on:
