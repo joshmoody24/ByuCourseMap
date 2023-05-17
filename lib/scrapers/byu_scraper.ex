@@ -4,7 +4,7 @@ defmodule Scraper.ByuScraper do
     "http://catalog2023.byu.edu"
   end
 
-  def scrape_courses do
+  def scrape_courses(rate_limit_seconds) do
 
     IO.puts "Scraping courses..."
 
@@ -21,27 +21,36 @@ defmodule Scraper.ByuScraper do
     |> Integer.parse()
     |> elem(0)
 
-      # get all the courses on each page
-      1..1
-      |> Enum.map(fn page ->
-        {:ok, response} = HTTPoison.get(base_url() <> "/courses?page=" <> to_string(page))
-        course_urls = response.body
-        |> Floki.parse_document!
-        |> Floki.find(".view-content a")
-        |> Floki.attribute("href")
+    # get all the courses on each page
+    courses = 0..num_pages-1
+    |> Enum.map(fn page ->
+      {:ok, response} = HTTPoison.get(base_url() <> "/courses?page=" <> to_string(page))
+      course_urls = response.body
+      |> Floki.parse_document!
+      |> Floki.find(".view-content a")
+      |> Floki.attribute("href")
 
-        course_urls
-        |> Enum.map(fn url ->
-          IO.puts "Scraping page " <> url
-          case HTTPoison.get(base_url() <> url) do
-            {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-              body
-              |> Floki.parse_document!
-              |> parse_course_page
+      course_urls
+      |> Enum.with_index
+      |> Enum.map(fn {url, index} ->
+        Process.sleep(rate_limit_seconds * 1000)
+        broadcast_progress(%{
+          completed_courses: page * length(course_urls) + index,
+          total_courses: num_pages * length(course_urls),
+          current_page: url
+        })
+        case HTTPoison.get(base_url() <> url) do
+          {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+            body
+            |> Floki.parse_document!
+            |> parse_course_page
           end
         end)
       end)
-      |> List.flatten
+    |> List.flatten
+
+    broadcast_complete(courses)
+    courses
   end
 
   def parse_course_page(document) do
@@ -83,8 +92,14 @@ defmodule Scraper.ByuScraper do
       :credit_hours => course_credit_hours
     }
 
-    IO.inspect course_data
-
     course_data
+  end
+
+  defp broadcast_progress(progress) do
+    Phoenix.PubSub.broadcast(ByuCourseMap.PubSub, "scrape_progress", {:scrape_progress, progress})
+  end
+
+  defp broadcast_complete(courses) do
+    Phoenix.PubSub.broadcast(ByuCourseMap.PubSub, "scrape_progress", {:scrape_complete, courses})
   end
 end
