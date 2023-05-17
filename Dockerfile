@@ -14,6 +14,5 @@ RUN mix local.rebar --force
 RUN mix deps.clean --all
 RUN mix deps.get
 RUN mix --version
-RUN mix deps.compile
 
 CMD mix phx.server
