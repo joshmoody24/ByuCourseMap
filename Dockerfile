@@ -1,11 +1,12 @@
-FROM elixir:latest
+FROM elixir:alpine
 
 COPY . /byu_course_map
 
 WORKDIR /byu_course_map
 
-RUN apt-get -y update
-RUN apt-get -y install inotify-tools
+RUN apk update
+RUN apk add inotify-tools
+RUN apk add git
 
 RUN mix local.hex --force
 RUN mix local.rebar --force
