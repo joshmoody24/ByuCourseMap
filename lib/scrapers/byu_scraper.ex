@@ -1,15 +1,23 @@
 defmodule Scraper.ByuScraper do
 
-  def base_url do
-    "http://catalog2023.byu.edu"
+  def scrape_departments(rate_limit_seconds) do
+    base_url = "https://catalog.byu.edu/departments"
+    {:ok, response} = HTTPoison.get(base_url)
+    response
+    |> Floki.parse_document!
+    |> Floki.find("li")
+    |> Floki.text
+    |> String.trim
   end
 
   def scrape_courses(rate_limit_seconds) do
 
+    base_url = "http://catalog2023.byu.edu"
+
     IO.puts "Scraping courses..."
 
     # find the number of pages
-    {:ok, response} = HTTPoison.get(base_url() <> "/courses")
+    {:ok, response} = HTTPoison.get(base_url <> "/courses")
     num_pages = response.body
     |> Floki.parse_document!
     |> Floki.find(".pager-last a")
@@ -24,7 +32,7 @@ defmodule Scraper.ByuScraper do
     # get all the courses on each page
     courses = 0..num_pages-1
     |> Enum.map(fn page ->
-      {:ok, response} = HTTPoison.get(base_url() <> "/courses?page=" <> to_string(page))
+      {:ok, response} = HTTPoison.get(base_url <> "/courses?page=" <> to_string(page))
       course_urls = response.body
       |> Floki.parse_document!
       |> Floki.find(".view-content a")
@@ -39,7 +47,7 @@ defmodule Scraper.ByuScraper do
           total_courses: num_pages * length(course_urls),
           current_page: url
         })
-        case HTTPoison.get(base_url() <> url) do
+        case HTTPoison.get(base_url <> url) do
           {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
             course = body
             |> Floki.parse_document!
@@ -56,8 +64,15 @@ defmodule Scraper.ByuScraper do
     courses
   end
 
-  def save_course(course) do
-
+  def save_course(raw_course) do
+    %ByuCourseMap.Course{
+      name: raw_course.name,
+      department_id: ByuCourseMap.Department |> ByuCourseMap.Repo.get_by(department_code: raw_course.department_code).id,
+      course_code: raw_course.course_code,
+      description: raw_course.description,
+      credit_hours: raw_course.credit_hours
+    }
+    |> ByuCourseMap.Repo.insert()
   end
 
   def parse_course_page(document) do
