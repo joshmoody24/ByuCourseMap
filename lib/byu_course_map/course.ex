@@ -7,8 +7,6 @@ defmodule ByuCourseMap.Course do
     field :credit_hours, :integer
     field :description, :string
     field :name, :string
-    # field :department_id, :id
-    belongs_to :department, ByuCourseMap.Department
     many_to_many :programs, ByuCourseMap.Program, join_through: "program_courses"
 
     timestamps()

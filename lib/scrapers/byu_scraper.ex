@@ -1,13 +1,18 @@
 defmodule Scraper.ByuScraper do
 
-  def scrape_departments(rate_limit_seconds) do
-    base_url = "https://catalog.byu.edu/departments"
+  def scrape_programs() do
+    base_url = "https://catalog2023.byu.edu/majors"
     {:ok, response} = HTTPoison.get(base_url)
     response
     |> Floki.parse_document!
-    |> Floki.find("li")
+    |> Floki.find(".content .program-list-view .field-content a")
     |> Floki.text
     |> String.trim
+    |> Enum.map(fn text ->
+      ByuCourseMap.Repo.insert(%ByuCourseMap.Program{
+
+        })
+    end)
   end
 
   def scrape_courses(rate_limit_seconds) do
@@ -67,7 +72,6 @@ defmodule Scraper.ByuScraper do
   def save_course(raw_course) do
     %ByuCourseMap.Course{
       name: raw_course.name,
-      department_id: ByuCourseMap.Department |> ByuCourseMap.Repo.get_by(department_code: raw_course.department_code).id,
       course_code: raw_course.course_code,
       description: raw_course.description,
       credit_hours: raw_course.credit_hours

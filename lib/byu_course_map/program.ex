@@ -7,7 +7,6 @@ defmodule ByuCourseMap.Program do
     # field :department_id, :id
     # field :program_type_id, :id
     belongs_to :program_type, ByuCourseMap.ProgramType
-    belongs_to :department, ByuCourseMap.Department
     many_to_many :courses, ByuCourseMap.Course, join_through: "program_courses"
 
     timestamps()
