@@ -109,15 +109,19 @@ defmodule Scraper.ByuScraper do
     |> Floki.text
     |> String.trim
 
-    course_credit_hours = document
-    |> Floki.find(".course-data-row .course-data-content")
-    |> hd
-    |> Floki.text
-    |> String.split(" ")
-    |> hd
-    |> String.trim
-    |> Float.parse
-    |> elem(0)
+    course_credit_hours = try do
+      document
+      |> Floki.find(".course-data-row .course-data-content")
+      |> hd
+      |> Floki.text
+      |> String.split(" ")
+      |> hd
+      |> String.trim
+      |> Float.parse
+      |> elem(0)
+    rescue
+      _ -> 3.0
+    end
 
     course_data = %{
       :name => course_name,
