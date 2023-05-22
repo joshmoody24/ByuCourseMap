@@ -5,8 +5,6 @@ defmodule ByuCourseMap.Repo.Migrations.CreateProgramTypes do
     create table(:program_types) do
       add :name, :string
       add :abbreviation, :string
-
-      timestamps()
     end
   end
 end

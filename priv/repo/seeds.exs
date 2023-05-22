@@ -12,12 +12,16 @@
 
 alias ByuCourseMap.Repo
 alias ByuCourseMap.ProgramType
+alias ByuCourseMap.Program
 
+Repo.delete_all(Program)
 Repo.delete_all(ProgramType)
 program_types = [
   %{ name: "Bachelor of Science", abbreviation: "BS" },
   %{ name: "Bachelor of Arts", abbreviation: "BA" },
   %{ name: "Bachelor of Fine Arts", abbreviation: "BFA" },
+  %{ name: "Bachelor of Music", abbreviation: "BM" },
+  %{ name: "Bachelor of General Studies", abbreviation: "BGS" },
   %{ name: "Minor", abbreviation: "Minor" },
 ]
-Repo.insert_all(program_types)
+Repo.insert_all(ProgramType, program_types)

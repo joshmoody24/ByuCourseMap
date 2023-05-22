@@ -4,12 +4,10 @@ defmodule ByuCourseMap.Course do
 
   schema "courses" do
     field :course_code, :string
-    field :credit_hours, :integer
+    field :credit_hours, :float
     field :description, :string
     field :name, :string
     many_to_many :programs, ByuCourseMap.Program, join_through: "program_courses"
-
-    timestamps()
   end
 
   @doc false

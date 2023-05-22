@@ -36,6 +36,11 @@ defmodule ByuCourseMapWeb.CrawlLive do
     end
   end
 
+  @impl true
+  def handle_event("crawl_programs", _, socket) do
+    start_scraping_programs(socket)
+  end
+
   defp stop_scraping(socket, pid) do
     Process.exit(pid, :kill)
     {:noreply, assign(socket, scraping: false, scraper_pid: nil)}
@@ -45,6 +50,11 @@ defmodule ByuCourseMapWeb.CrawlLive do
     rate_limit = 1
     pid = spawn(fn -> Scraper.ByuScraper.scrape_courses(rate_limit) end)
     {:noreply, assign(socket, scraping: true, scraper_pid: pid)}
+  end
+
+  defp start_scraping_programs(socket) do
+    Scraper.ByuScraper.scrape_programs()
+    {:noreply, assign(socket, scraping: false)}
   end
 
   @impl true
@@ -60,8 +70,15 @@ defmodule ByuCourseMapWeb.CrawlLive do
 
     <p class="text-center">
       <.button phx-click="crawl">
-      <%= if @scraping == false do %>Start<% else %>Stop<% end %>
-      Scraping BYU Courses</.button>
+        <%= if @scraping == false do %>Start<% else %>Stop<% end %>
+        Scraping BYU Courses
+      </.button>
+    </p>
+
+    <p class="text-center">
+      <.button phx-click="crawl_programs">
+        Scrape BYU Programs
+      </.button>
     </p>
 
     <%= if @scraping == true and @scrape_progress != nil do %>

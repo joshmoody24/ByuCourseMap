@@ -6,8 +6,6 @@ defmodule ByuCourseMap.ProgramType do
     field :name, :string
     field :abbreviation, :string
     has_many :programs, ByuCourseMap.Program
-
-    timestamps()
   end
 
   @doc false

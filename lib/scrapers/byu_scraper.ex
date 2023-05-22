@@ -1,21 +1,30 @@
 defmodule Scraper.ByuScraper do
 
   def scrape_programs() do
-    base_url = "https://catalog2023.byu.edu/majors"
-    {:ok, response} = HTTPoison.get(base_url)
-    response
-    |> Floki.parse_document!
-    |> Floki.find(".content .program-list-view .field-content a")
-    |> Floki.text
-    |> String.trim
-    |> Enum.map(fn text ->
-      ByuCourseMap.Repo.insert(%ByuCourseMap.Program{
 
-        })
+    ByuCourseMap.Repo.delete_all(ByuCourseMap.Program)
+
+    {:ok, response} = HTTPoison.get("http://catalog2023.byu.edu/majors")
+    response.body
+    |> Floki.parse_document!
+    |> Floki.find(".field-content a")
+    |> Enum.map(fn a ->
+      a |> Floki.text |> String.trim
+    end)
+    |> Enum.map(fn text ->
+      IO.puts text
+      name = text |> String.split("(") |> Enum.at(0) |> String.trim()
+      abbreviation = text |> String.split("(") |> Enum.at(-1) |> String.replace(")", "") |> String.trim()
+      ByuCourseMap.Repo.insert(%ByuCourseMap.Program{
+        name: name,
+        program_type_id: ByuCourseMap.Repo.get_by!(ByuCourseMap.ProgramType, [abbreviation: abbreviation]).id
+      })
     end)
   end
 
   def scrape_courses(rate_limit_seconds) do
+
+    ByuCourseMap.Repo.delete_all(ByuCourseMap.Course)
 
     base_url = "http://catalog2023.byu.edu"
 
@@ -113,7 +122,7 @@ defmodule Scraper.ByuScraper do
     course_data = %{
       :name => course_name,
       :department => course_department_code,
-      :code => course_code,
+      :course_code => course_code,
       :description => course_description,
       :credit_hours => course_credit_hours
     }

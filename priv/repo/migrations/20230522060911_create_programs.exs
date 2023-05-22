@@ -5,8 +5,6 @@ defmodule ByuCourseMap.Repo.Migrations.CreatePrograms do
     create table(:programs) do
       add :name, :string
       add :program_type_id, references(:program_types, on_delete: :nothing)
-
-      timestamps()
     end
 
     create index(:programs, [:program_type_id])
