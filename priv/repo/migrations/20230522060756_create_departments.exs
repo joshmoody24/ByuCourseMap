@@ -3,8 +3,8 @@ defmodule ByuCourseMap.Repo.Migrations.CreateDepartments do
 
   def change do
     create table(:departments) do
+      add :department_code, :string
       add :name, :string
-      add :code, :string
 
       timestamps()
     end

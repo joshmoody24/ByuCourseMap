@@ -41,9 +41,12 @@ defmodule Scraper.ByuScraper do
         })
         case HTTPoison.get(base_url() <> url) do
           {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-            body
+            course = body
             |> Floki.parse_document!
             |> parse_course_page
+
+            save_course(course)
+            course
           end
         end)
       end)
@@ -51,6 +54,10 @@ defmodule Scraper.ByuScraper do
 
     broadcast_complete(courses)
     courses
+  end
+
+  def save_course(course) do
+
   end
 
   def parse_course_page(document) do

@@ -3,7 +3,7 @@ defmodule ByuCourseMap.Department do
   import Ecto.Changeset
 
   schema "departments" do
-    field :code, :string
+    field :department_code, :string
     field :name, :string
 
     timestamps()
@@ -12,7 +12,7 @@ defmodule ByuCourseMap.Department do
   @doc false
   def changeset(department, attrs) do
     department
-    |> cast(attrs, [:name, :code])
-    |> validate_required([:name, :code])
+    |> cast(attrs, [:department_code, :name])
+    |> validate_required([:department_code, :name])
   end
 end
